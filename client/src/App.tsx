@@ -1,35 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import { useEffect, useState } from "react";
+import "./App.css";
+import axios from "axios";
+import { socket } from "./socket";
 function App() {
-  const [count, setCount] = useState(0)
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Front end connected");
+    });
+    socket.on("chat", (message) => {
+      console.log(message);
+    });
+    async function getChatMessages() {
+      const res = await axios.get("http://localhost:8000/get-messages");
+      console.log(res);
+      setMessages(res.data.chatHistory);
+    }
+    getChatMessages();
+  }, []);
+
+  function sendMessage() {
+    socket.emit("chat", { message: input });
+    setMessages((messages) => [...messages, { role: "user", content: input }]);
+    setInput("");
+  }
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        {messages.map((message, idx) => (
+          <>
+            <div key={idx}>{message.text}</div>
+          </>
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <button disabled={input === ""} onClick={sendMessage} type="button">
+        Send Message
+      </button>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

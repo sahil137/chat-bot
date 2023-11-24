@@ -6,8 +6,8 @@ const messageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    processedText: {
-      type: String,
+    sentByServer: {
+      type: Boolean,
       required: true,
     },
   },
