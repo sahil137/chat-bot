@@ -1,16 +1,20 @@
-import Message from "../models/message-model";
+import { processMessage } from "../config/openai.js";
+import Message from "../models/message-model.js";
 
 export async function socketConnection(socket) {
-  console.log("User Connected");
-  console.log("cokertdsadsa", socket);
   socket.on("chat", async (data) => {
-    console.log(data);
-    const res = await Message.create({
+    await Message.create({
       text: data.message,
       sentByServer: false,
     });
-    // const data =
-    // socket.emit("chat", "Message recieved");
+    const messages = await Message.find();
+    const openaiRes = await processMessage(messages);
+    console.log("sdsadas", openaiRes);
+    await Message.create({
+      text: openaiRes[0]?.message?.content,
+      sentByServer: true,
+    });
+    socket.emit("chat", { message: openaiRes[0].message.content });
   });
   socket.on("disconnect", () => {
     console.log("User Disconnected");

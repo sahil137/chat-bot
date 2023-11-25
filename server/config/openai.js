@@ -5,10 +5,14 @@ dotenv.config();
 
 const openAi = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export const processMessage = async (message) => {
+export const processMessage = async (messages) => {
   try {
+    const allMessages = messages.map((message) => ({
+      role: message.sentByServer ? "assistant" : "user",
+      content: message.text,
+    }));
     const res = await openAi.chat.completions.create({
-      messages: [{ role: "system", content: message }],
+      messages: allMessages,
       model: "gpt-3.5-turbo",
     });
     return res.choices;
