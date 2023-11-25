@@ -19,7 +19,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
   },
 });
 
@@ -30,5 +30,5 @@ app.use("/", route);
 const PORT = 8000;
 
 server.listen(PORT, () => {
-  console.log("server running at http://localhost:8000");
+  console.log(`server running at Port: ${PORT}`);
 });

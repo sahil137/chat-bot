@@ -9,14 +9,29 @@ function App() {
   const [input, setInput] = useState("");
 
   async function getChatMessages() {
-    const res = await axios.get("http://localhost:8000/get-messages");
+    const res = await axios.get(
+      `${import.meta.env.VITE_REACT_APP_API_URL}/get-messages`
+    );
     setMessages(res.data.chatHistory);
   }
 
-  const scrollToBottom = () => {
-    const bottomDiv = document.getElementById("bottom-div");
-    bottomDiv.scrollIntoView(false);
-  };
+  function scrollToBottom() {
+    const scrollableDiv = document.getElementById("bottom-div");
+
+    // Check if the scroll is already at the bottom
+    const isAtBottom =
+      scrollableDiv.scrollHeight - scrollableDiv.scrollTop ===
+      scrollableDiv.clientHeight;
+
+    // If not at the bottom, scroll to the bottom
+    if (!isAtBottom) {
+      scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+    }
+  }
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     getChatMessages();
@@ -31,12 +46,10 @@ function App() {
           { text: message.message, sentByServer: true },
         ]);
       }
-      scrollToBottom();
     });
   }, [messages]);
 
   function sendMessage() {
-    scrollToBottom();
     socket.emit("chat", { message: input });
     setMessages((messages) => [
       ...messages,
@@ -47,7 +60,7 @@ function App() {
 
   return (
     <div className="h-[800px] relative">
-      <div className="flex flex-col justify-between w-[500px] h-[700px] overflow-y-auto relative">
+      <div className="flex flex-col justify-between w-[500px] h-[700px] overflow-y-scroll">
         <div className="p-2">
           {messages.map((message, idx) => (
             <>
@@ -62,7 +75,7 @@ function App() {
               )}
             </>
           ))}
-          <div id="bottom-div" ref={divRef}></div>
+          <div className="h-1" id="bottom-div" ref={divRef}></div>
         </div>
       </div>
       <div className="flex w-[500px] gap-3 absolute bottom-0">
