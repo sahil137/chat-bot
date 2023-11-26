@@ -17,16 +17,18 @@ function App() {
 
   function scrollToBottom() {
     const scrollableDiv = document.getElementById("bottom-div");
+    scrollableDiv.scrollIntoView({
+      behavior: "smooth",
+    });
+    // // Check if the scroll is already at the bottom
+    // const isAtBottom =
+    //   scrollableDiv.scrollHeight - scrollableDiv.scrollTop ===
+    //   scrollableDiv.clientHeight;
 
-    // Check if the scroll is already at the bottom
-    const isAtBottom =
-      scrollableDiv.scrollHeight - scrollableDiv.scrollTop ===
-      scrollableDiv.clientHeight;
-
-    // If not at the bottom, scroll to the bottom
-    if (!isAtBottom) {
-      scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
-    }
+    // // If not at the bottom, scroll to the bottom
+    // if (!isAtBottom) {
+    //   scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+    // }
   }
 
   useEffect(() => {
