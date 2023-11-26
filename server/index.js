@@ -27,7 +27,7 @@ io.on("connection", socketConnection);
 
 app.use("/", route);
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 server.listen(PORT, () => {
   console.log(`server running at Port: ${PORT}`);
