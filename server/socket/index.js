@@ -11,7 +11,7 @@ export async function socketConnection(socket) {
     const openaiRes = await processMessage(messages);
     console.log("sdsadas", openaiRes);
     await Message.create({
-      text: openaiRes[0]?.message?.content,
+      text: openaiRes[0].message?.content,
       sentByServer: true,
     });
     socket.emit("chat", { message: openaiRes[0].message.content });
