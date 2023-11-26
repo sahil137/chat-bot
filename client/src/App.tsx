@@ -20,23 +20,14 @@ function App() {
     scrollableDiv.scrollIntoView({
       behavior: "smooth",
     });
-    // // Check if the scroll is already at the bottom
-    // const isAtBottom =
-    //   scrollableDiv.scrollHeight - scrollableDiv.scrollTop ===
-    //   scrollableDiv.clientHeight;
-
-    // // If not at the bottom, scroll to the bottom
-    // if (!isAtBottom) {
-    //   scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
-    // }
   }
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+    getChatMessages();
+  }, []);
 
   useEffect(() => {
-    getChatMessages();
     socket.on("connect", () => {
       console.log("Client Connected");
     });
@@ -49,7 +40,10 @@ function App() {
         ]);
       }
     });
-  }, [messages]);
+    return () => {
+      socket.off("chat");
+    };
+  }, []);
 
   function sendMessage() {
     socket.emit("chat", { message: input });

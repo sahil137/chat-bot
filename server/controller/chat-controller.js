@@ -1,5 +1,6 @@
 import Message from "../models/message-model.js";
 
+// * Get All Messages from MongoDB
 export const getAllMessages = async (req, res) => {
   try {
     const chatHistory = await Message.find();
